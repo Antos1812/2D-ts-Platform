@@ -1,6 +1,6 @@
 
 const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d")!;
+const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -104,6 +104,7 @@ document.addEventListener("keydown", (event) => {
     }
     else if (event.key === "ArrowUp"){
         keys.up = true;
+        event.preventDefault();
     }
 
     event.preventDefault();
