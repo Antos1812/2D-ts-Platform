@@ -16,9 +16,9 @@ interface Player {
 }
 
 const platforms = [
-    { x: 0, y: canvas.height - 100, width: canvas.width, height: 100 },
+    { x: 0, y: canvas.height - 120, width: canvas.width, height: 100 },
     { x: 200, y: canvas.height - 300, width: 200, height: 20 },
-    { x: 600, y: canvas.height - 500, width: 200, height: 20 }
+    { x: 600, y: canvas.height - 400, width: 200, height: 20 }
 ];
 
 const player: Player = {
@@ -52,33 +52,34 @@ function update() {
         player.velocityX = 0;
     }
 
-    // Skakanie
+    // Jumping
     if (keys.up && !player.jumping) {
-        player.velocityY = -15; // Siła skoku
+        player.velocityY = -15;
         player.jumping = true;
     }
 
     //Boost on shift
     if(keys.shift){
         if(keys.right){
-            player.velocityX = 10;
+            player.velocityX += 5;
         }else if(keys.left){
-            player.velocityX = -10;
+            player.velocityX += -5;
         }else {
             player.velocityX = 0;
         }
         
     }
 
-    // Grawitacja
-    player.velocityY += 0.5;
+    //Gravity
+    player.velocityY += 0.55;
     player.velocityY = Math.min(player.velocityY, maxFallSpeed);
+    
 
-    // Aktualizacja pozycji gracza
+    
     player.x += player.velocityX;
     player.y += player.velocityY;
 
-    // Sprawdzenie kolizji z platformami
+    //Collision
     platforms.forEach((platform) => {
         if (
             player.x + player.width > platform.x &&
@@ -92,7 +93,7 @@ function update() {
         }
     });
 
-    // Ograniczenie ruchu gracza do obszaru canvasu
+    
     if (player.x < 0) {
         player.x = 0;
     } else if (player.x + player.width > canvas.width) {
@@ -105,13 +106,13 @@ function update() {
         player.y = canvas.height - player.height;
     }
 
-    // Rysowanie gracza i platform
+    //Player and platforms
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#FF6347"; // Kolor gracza
+    ctx.fillStyle = "#0c4014"; //Player
     ctx.fillRect(player.x, player.y, player.width, player.height);
 
-    ctx.fillStyle = "#008000"; // Kolor platform
+    ctx.fillStyle = "#000000"; //Platforms
     platforms.forEach((platform) => {
         ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
@@ -119,15 +120,15 @@ function update() {
     requestAnimationFrame(update);
 }
 
-// Obsługa zdarzeń klawiatury
+
 document.addEventListener("keydown", (event) => {
     if (event.key === "d") {
         keys.right = true;
     } else if (event.key === "a") {
         keys.left = true;
-    } else if (event.key === " " && !keys.spacePressed) { // Upewnij się, że można skakać tylko raz po naciśnięciu
+    } else if (event.key === " " && !keys.spacePressed) { 
         keys.up = true;
-        keys.spacePressed = true; // Zaznacz, że spacja została naciśnięta
+        keys.spacePressed = true;
     }
     else if (event.key === "Shift" || event.key === "ShiftLeft"){
         keys.shift = true;
@@ -142,7 +143,7 @@ document.addEventListener("keyup", (event) => {
         keys.left = false;
     } else if (event.key === " ") {
         keys.up = false;
-        keys.spacePressed = false; // Ustaw z powrotem, że spacja nie jest naciśnięta
+        keys.spacePressed = false;
     }
     else if (event.key === "Shift" || event.key === "ShiftLeft"){
         keys.shift = false;
