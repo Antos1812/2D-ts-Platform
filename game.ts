@@ -41,6 +41,9 @@ const keys = {
 };
 
 const maxFallSpeed = 10;
+const grav = 0.55;
+const jStr = -15;
+const frct = 0.9;
 
 function update() {
     
@@ -49,12 +52,12 @@ function update() {
     } else if (keys.left) {
         player.velocityX = -player.speed;
     } else {
-        player.velocityX = 0;
+        player.velocityX *= frct;
     }
 
     // Jumping
     if (keys.up && !player.jumping) {
-        player.velocityY = -15;
+        player.velocityY = jStr;
         player.jumping = true;
     }
 
@@ -71,7 +74,7 @@ function update() {
     }
 
     //Gravity
-    player.velocityY += 0.55;
+    player.velocityY += grav;
     player.velocityY = Math.min(player.velocityY, maxFallSpeed);
     
 

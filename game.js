@@ -3,9 +3,9 @@ var ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 var platforms = [
-    { x: 0, y: canvas.height - 100, width: canvas.width, height: 100 },
+    { x: 0, y: canvas.height - 120, width: canvas.width, height: 100 },
     { x: 200, y: canvas.height - 300, width: 200, height: 20 },
-    { x: 600, y: canvas.height - 500, width: 200, height: 20 }
+    { x: 600, y: canvas.height - 400, width: 200, height: 20 }
 ];
 var player = {
     x: 50,
@@ -20,8 +20,14 @@ var player = {
 var keys = {
     right: false,
     left: false,
-    up: false
+    up: false,
+    spacePressed: false,
+    shift: false
 };
+var maxFallSpeed = 10;
+var grav = 0.55;
+var jStr = -15;
+var frct = 0.9;
 function update() {
     if (keys.right) {
         player.velocityX = player.speed;
@@ -30,18 +36,36 @@ function update() {
         player.velocityX = -player.speed;
     }
     else {
-        player.velocityX = 0;
+        player.velocityX *= frct;
     }
+    // Jumping
     if (keys.up && !player.jumping) {
-        player.velocityY = -15;
+        player.velocityY = jStr;
         player.jumping = true;
     }
-    player.velocityY += 0.5;
+    //Boost on shift
+    if (keys.shift) {
+        if (keys.right) {
+            player.velocityX += 5;
+        }
+        else if (keys.left) {
+            player.velocityX += -5;
+        }
+        else {
+            player.velocityX = 0;
+        }
+    }
+    //Gravity
+    player.velocityY += grav;
+    player.velocityY = Math.min(player.velocityY, maxFallSpeed);
     player.x += player.velocityX;
     player.y += player.velocityY;
+    //Collision
     platforms.forEach(function (platform) {
-        if (player.x + player.width > platform.x && player.x < platform.x + platform.width &&
-            player.y + player.height > platform.y && player.y + player.height <= platform.y + 10) {
+        if (player.x + player.width > platform.x &&
+            player.x < platform.x + platform.width &&
+            player.y + player.height > platform.y &&
+            player.y + player.height <= platform.y + 10) {
             player.velocityY = 0;
             player.y = platform.y - player.height;
             player.jumping = false;
@@ -59,36 +83,46 @@ function update() {
     else if (player.y + player.height > canvas.height) {
         player.y = canvas.height - player.height;
     }
+    //Player and platforms
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "FF6347";
+    ctx.fillStyle = "#0c4014"; //Player
     ctx.fillRect(player.x, player.y, player.width, player.height);
-    ctx.fillStyle = "008000";
+    ctx.fillStyle = "#000000"; //Platforms
     platforms.forEach(function (platform) {
         ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
     requestAnimationFrame(update);
 }
 document.addEventListener("keydown", function (event) {
-    if (event.key === "ArrowRight") {
+    if (event.key === "d") {
         keys.right = true;
     }
-    else if (event.key === "ArrowLeft") {
+    else if (event.key === "a") {
         keys.left = true;
     }
-    else if (event.key === "Space") {
+    else if (event.key === " " && !keys.spacePressed) {
         keys.up = true;
+        keys.spacePressed = true;
     }
+    else if (event.key === "Shift" || event.key === "ShiftLeft") {
+        keys.shift = true;
+    }
+    event.preventDefault();
 });
 document.addEventListener("keyup", function (event) {
-    if (event.key === "ArrowRight") {
+    if (event.key === "d") {
         keys.right = false;
     }
-    else if (event.key === "ArrowLeft") {
+    else if (event.key === "a") {
         keys.left = false;
     }
-    else if (event.key === "ArrowUp") {
+    else if (event.key === " ") {
         keys.up = false;
+        keys.spacePressed = false;
     }
+    else if (event.key === "Shift" || event.key === "ShiftLeft") {
+        keys.shift = false;
+    }
+    event.preventDefault();
 });
 update();
-"";
