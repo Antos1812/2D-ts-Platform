@@ -4,17 +4,6 @@ const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 canvas.width = window.innerWidth;
 canvas.height = 2000;
 
-interface Player {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    velocityX: number;
-    velocityY: number;
-    speed: number;
-    jumping: boolean;
-}
-
 const platforms = [
     { x: 0, y: canvas.height - 120, width: canvas.width, height: 100 },
     { x: 200, y: canvas.height - 300, width: 200, height: 20 },
