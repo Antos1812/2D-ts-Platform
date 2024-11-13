@@ -1,4 +1,4 @@
-interface Player {
+export interface Player {
     x: number;
     y: number;
     width: number;
