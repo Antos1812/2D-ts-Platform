@@ -1,11 +1,17 @@
 var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.height = 2000;
 var platforms = [
     { x: 0, y: canvas.height - 120, width: canvas.width, height: 100 },
     { x: 200, y: canvas.height - 300, width: 200, height: 20 },
-    { x: 600, y: canvas.height - 400, width: 200, height: 20 }
+    { x: 600, y: canvas.height - 400, width: 200, height: 20 },
+    { x: 200, y: canvas.height - 550, width: 200, height: 20 },
+    { x: 600, y: canvas.height - 650, width: 200, height: 20 },
+    { x: 200, y: canvas.height - 750, width: 200, height: 20 },
+    { x: 600, y: canvas.height - 850, width: 200, height: 20 },
+    { x: 200, y: canvas.height - 950, width: 200, height: 20 },
+    { x: 600, y: canvas.height - 1050, width: 200, height: 20 }
 ];
 var player = {
     x: 50,
@@ -22,7 +28,6 @@ var keys = {
     left: false,
     up: false,
     spacePressed: false,
-    shift: false
 };
 var maxFallSpeed = 10;
 var grav = 0.55;
@@ -42,18 +47,6 @@ function update() {
     if (keys.up && !player.jumping) {
         player.velocityY = jStr;
         player.jumping = true;
-    }
-    //Boost on shift
-    if (keys.shift) {
-        if (keys.right) {
-            player.velocityX += 5;
-        }
-        else if (keys.left) {
-            player.velocityX += -5;
-        }
-        else {
-            player.velocityX = 0;
-        }
     }
     //Gravity
     player.velocityY += grav;
@@ -104,9 +97,6 @@ document.addEventListener("keydown", function (event) {
         keys.up = true;
         keys.spacePressed = true;
     }
-    else if (event.key === "Shift" || event.key === "ShiftLeft") {
-        keys.shift = true;
-    }
     event.preventDefault();
 });
 document.addEventListener("keyup", function (event) {
@@ -119,9 +109,6 @@ document.addEventListener("keyup", function (event) {
     else if (event.key === " ") {
         keys.up = false;
         keys.spacePressed = false;
-    }
-    else if (event.key === "Shift" || event.key === "ShiftLeft") {
-        keys.shift = false;
     }
     event.preventDefault();
 });
