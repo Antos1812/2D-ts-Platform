@@ -1,8 +1,11 @@
-var canvas = document.getElementById("gameCanvas");
-var ctx = canvas.getContext("2d");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const camera_1 = require("./camera");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = 2000;
-var platforms = [
+const platforms = [
     { x: 0, y: canvas.height - 120, width: canvas.width, height: 100 },
     { x: 200, y: canvas.height - 300, width: 200, height: 20 },
     { x: 600, y: canvas.height - 400, width: 200, height: 20 },
@@ -13,7 +16,7 @@ var platforms = [
     { x: 200, y: canvas.height - 950, width: 200, height: 20 },
     { x: 600, y: canvas.height - 1050, width: 200, height: 20 }
 ];
-var player = {
+const player = {
     x: 50,
     y: canvas.height - 200,
     width: 50,
@@ -23,17 +26,19 @@ var player = {
     speed: 5,
     jumping: false
 };
-var keys = {
+const camera = new camera_1.Camera(canvas.width, canvas.height);
+const keys = {
     right: false,
     left: false,
     up: false,
     spacePressed: false,
 };
-var maxFallSpeed = 10;
-var grav = 0.55;
-var jStr = -15;
-var frct = 0.9;
+const maxFallSpeed = 10;
+const grav = 0.55;
+const jStr = -15;
+const frct = 0.9;
 function update() {
+    camera.follow(player);
     if (keys.right) {
         player.velocityX = player.speed;
     }
@@ -54,7 +59,7 @@ function update() {
     player.x += player.velocityX;
     player.y += player.velocityY;
     //Collision
-    platforms.forEach(function (platform) {
+    platforms.forEach((platform) => {
         if (player.x + player.width > platform.x &&
             player.x < platform.x + platform.width &&
             player.y + player.height > platform.y &&
@@ -76,17 +81,18 @@ function update() {
     else if (player.y + player.height > canvas.height) {
         player.y = canvas.height - player.height;
     }
+    ctx.setTransform(1, 0, 0, 1, -camera.x, -camera.y);
     //Player and platforms
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#0c4014"; //Player
     ctx.fillRect(player.x, player.y, player.width, player.height);
     ctx.fillStyle = "#000000"; //Platforms
-    platforms.forEach(function (platform) {
+    platforms.forEach((platform) => {
         ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
     requestAnimationFrame(update);
 }
-document.addEventListener("keydown", function (event) {
+document.addEventListener("keydown", (event) => {
     if (event.key === "d") {
         keys.right = true;
     }
@@ -99,7 +105,7 @@ document.addEventListener("keydown", function (event) {
     }
     event.preventDefault();
 });
-document.addEventListener("keyup", function (event) {
+document.addEventListener("keyup", (event) => {
     if (event.key === "d") {
         keys.right = false;
     }
@@ -112,4 +118,7 @@ document.addEventListener("keyup", function (event) {
     }
     event.preventDefault();
 });
+setInterval(() => {
+    update();
+}, 1000 / 60);
 update();
