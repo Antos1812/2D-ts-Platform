@@ -1,4 +1,5 @@
 import { Player } from "./player";
+import { Camera } from "./camera";
 const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -28,6 +29,8 @@ const player: Player = {
     jumping: false
 };
 
+const camera:Camera = new Camera(canvas.width, canvas.height);
+
 const keys = {
     right: false,
     left: false,
@@ -41,7 +44,8 @@ const jStr = -15;
 const frct = 0.9;
 
 function update() {
-    
+    camera.follow(player);
+
     if (keys.right) {
         player.velocityX = player.speed;
     } else if (keys.left) {
@@ -90,6 +94,8 @@ function update() {
         player.y = canvas.height - player.height;
     }
 
+    ctx.setTransform(1, 0, 0, 1, -camera.x, -camera.y);
+
     //Player and platforms
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -128,6 +134,10 @@ document.addEventListener("keyup", (event) => {
     }
     event.preventDefault();
 });
+
+setInterval(() => {
+    update();
+}, 1000/60);
 
 
 update();
